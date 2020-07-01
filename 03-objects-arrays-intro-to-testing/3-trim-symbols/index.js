@@ -4,6 +4,7 @@
  * @param {number} size - the allowed size of consecutive identical symbols
  * @returns {string} - the new string without extra symbols according passed size
  */
-export function trimSymbols(string, size) {
-
+export function trimSymbols(string, size = string.length) {
+  return (string.match(/(.)\1*/g) || [])
+    .map(arr => arr.length > size ? arr.slice(0, size) : arr).join('');
 }
