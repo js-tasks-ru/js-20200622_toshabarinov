@@ -5,6 +5,6 @@
  * @returns {string} - the new string without extra symbols according passed size
  */
 export function trimSymbols(string, size = string.length) {
-  const splitArr = string.match(/(.)\1*/g) || [];
-  return splitArr.map(arr => arr.length > size ? arr.slice(0, size) : arr).join('');
+  return (string.match(/(.)\1*/g) || [])
+    .map(arr => arr.length > size ? arr.slice(0, size) : arr).join('');
 }
