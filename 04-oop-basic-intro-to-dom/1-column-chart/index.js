@@ -26,7 +26,6 @@ export default class ColumnChart {
   }
 
   render() {
-    console.log('Test2: ' + this._link);
     this.element = document.createElement('div');
     this.element.innerHTML = `
         <div class='column-chart'>
