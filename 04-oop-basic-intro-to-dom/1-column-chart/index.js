@@ -1,7 +1,5 @@
 export default class ColumnChart {
 
-  subElements = {};
-
   constructor({
     data = [],
     label = 'empty',
