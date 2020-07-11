@@ -1,7 +1,7 @@
 export default class SortableTable {
 
   headers = [];
-  subElements;
+  subElements = {};
 
   constructor(headers = [], {data = []} = {}) {
     headers.forEach(header => this.parseHeader(header));
@@ -10,10 +10,8 @@ export default class SortableTable {
   }
 
   sort(fieldValue = '', orderValue = 'asc') {
-    const data = [...this.subElements.children];
     const cellIndex = this.headers.findIndex(header => header.id === fieldValue);
-   // console.log("DATA:");
-    //data.forEach(val => console.log(val.children[cellIndex].innerHTML));
+    const data = [...this.subElements.body.children];
     let sortFunction;
 
     switch (this.headers.find(header => fieldValue === header.id)?.sortType) {
@@ -28,7 +26,7 @@ export default class SortableTable {
       sortFunction(first, second, cellIndex, 'asc') :
       sortFunction(second, first, cellIndex, 'desc'));
 
-    data.forEach(elem => this.subElements.append(elem));
+    data.forEach(elem => this.subElements.body.append(elem));
   }
 
   compareNumber(first, second, cellIndex) {
@@ -36,9 +34,7 @@ export default class SortableTable {
   }
 
   compareString(first, second, cellIndex, type) {
-    const result =  first.children[cellIndex].innerHTML.localeCompare(second.children[cellIndex].innerHTML, 'ru', {usage: 'sort', caseFirst : "upper"});
-  //  console.log(first.children[cellIndex].innerHTML + " : " + second.children[cellIndex].innerHTML + ", result: " + result + ", type: " + type);
-    return result;
+    return first.children[cellIndex].innerHTML.localeCompare(second.children[cellIndex].innerHTML, 'ru-RU', {caseFirst: "upper"});
   }
 
   get template() {
@@ -81,7 +77,7 @@ export default class SortableTable {
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
-    this.subElements = this.element.getElementsByClassName('sortable-table__body')[0];
+    this.subElements.body = this.element.getElementsByClassName('sortable-table__body')[0];
   }
 
   parseHeader({
