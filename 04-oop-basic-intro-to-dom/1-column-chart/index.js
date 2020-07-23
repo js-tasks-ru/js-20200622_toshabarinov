@@ -40,7 +40,7 @@ export default class ColumnChart {
         </div>
       `;
 
-    this.body = this.element.getElementsByClassName('column-chart__chart')[0];
+    this.body = this.element.querySelector('.column-chart__chart');
 
     if (!this._data.length) {
       this.element.className = 'column-chart_loading';
