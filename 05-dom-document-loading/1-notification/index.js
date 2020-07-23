@@ -16,7 +16,7 @@ export default class NotificationMessage {
 
   get template() {
     return `
-    <div class="notification ${this.type}" style="${'--value:' + this.duration / 1000 + 's'}">
+    <div class="notification ${this.type}" style="--value: ${this.duration / 1000}s">
       <div class="timer"></div>
       <div class="inner-wrapper">
         <div class="notification-header">${this.type}</div>
@@ -39,8 +39,8 @@ export default class NotificationMessage {
     this.element = element.firstElementChild;
   }
 
-  show(appendTo = document.body) {
-    appendTo.append(NotificationMessage.mainElement);
+  show(root = document.body) {
+    root.append(NotificationMessage.mainElement);
     NotificationMessage.timerId = setTimeout(this.remove, this.duration);
   }
 
