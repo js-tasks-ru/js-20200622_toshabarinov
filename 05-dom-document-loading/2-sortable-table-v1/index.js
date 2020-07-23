@@ -10,11 +10,10 @@ export default class SortableTable {
   }
 
   sort(fieldValue = '', orderValue = 'asc') {
-    const cellIndex = this.headers.findIndex(header => header.id === fieldValue);
-    const data = [...this.subElements.body.children];
     let sortFunction;
+    const sortType = this.headers.find(header => fieldValue === header.id)?.sortType;
 
-    switch (this.headers.find(header => fieldValue === header.id)?.sortType) {
+    switch (sortType) {
     case 'number':
       sortFunction = this.compareNumber;
       break;
@@ -22,19 +21,19 @@ export default class SortableTable {
       sortFunction = this.compareString;
     }
 
-    data.sort((first, second) => orderValue === 'asc' ?
-      sortFunction(first, second, cellIndex, 'asc') :
-      sortFunction(second, first, cellIndex, 'desc'));
+    this.data.sort((first, second) => orderValue === 'asc' ?
+      sortFunction(first, second, fieldValue) :
+      sortFunction(second, first, fieldValue));
 
-    data.forEach(elem => this.subElements.body.append(elem));
+    this.subElements.body.innerHTML = this.generateTableEntries();
   }
 
-  compareNumber(first, second, cellIndex) {
-    return Number.parseFloat(first.children[cellIndex].innerHTML) - Number.parseFloat(second.children[cellIndex].innerHTML);
+  compareNumber(first, second, fieldValue) {
+    return first[fieldValue] - second[fieldValue];
   }
 
-  compareString(first, second, cellIndex, type) {
-    return first.children[cellIndex].innerHTML.localeCompare(second.children[cellIndex].innerHTML, 'ru-RU', {caseFirst: "upper"});
+  compareString(first, second, fieldValue) {
+    return first[fieldValue].localeCompare(second[fieldValue], 'ru-RU', {caseFirst: "upper"});
   }
 
   get template() {
@@ -45,7 +44,7 @@ export default class SortableTable {
           ${this.headers.map(header => this.generateHeader(header)).join('')}
         </div>
         <div data-element="body" class="sortable-table__body">
-          ${this.data.map(dataElement => this.generateDataElement(dataElement)).join('')}
+          ${this.generateTableEntries()}
         </div>
         <div data-element="loading" class="loading-line sortable-table__loading-line"></div>
       </div>
@@ -53,12 +52,12 @@ export default class SortableTable {
     `;
   }
 
-  generateDataElement(dataElement) {
-    return `
-      <a href="#" class="sortable-table__row">
+  generateTableEntries() {
+    return this.data.map(dataElement =>
+      `<a href="#" class="sortable-table__row">
           ${this.headers.map(header => header.template(dataElement, header.id)).join('')}
-      </a>
-    `;
+       </a>`
+    ).join('');
   }
 
   generateHeader(header) {
@@ -77,7 +76,7 @@ export default class SortableTable {
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
-    this.subElements.body = this.element.getElementsByClassName('sortable-table__body')[0];
+    this.subElements.body = this.element.querySelector('.sortable-table__body');
   }
 
   parseHeader({
