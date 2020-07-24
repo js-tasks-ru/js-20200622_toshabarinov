@@ -1,14 +1,6 @@
 export default class ColumnChart {
 
-  constructor(data) {
-    this.initialize(data);
-  }
-
-  update(newData) {
-    this.initialize(newData);
-  }
-
-  initialize({
+  constructor({
     data = [],
     label = 'empty',
     link = '',
@@ -25,6 +17,12 @@ export default class ColumnChart {
     this.render();
   }
 
+  update(newData) {
+    this._data = newData.bodyData;
+    this.calculateDataValues();
+    this.body.innerHTML = this.dataTemplate;
+  }
+
   render() {
     this.element = document.createElement('div');
     this.element.innerHTML = `
@@ -35,16 +33,22 @@ export default class ColumnChart {
           </div>
           <div class='column-chart__container'>
             <div class='column-chart__header'>${this._value}</div>
-            <div class='column-chart__chart'>
-              ${this._data.map(dataElement => this.generateValueElement(dataElement)).join('')}
+            <div class='column-chart__chart' >
+              ${this.dataTemplate}
             </div>
           </div>
         </div>
       `;
 
-    if (this._data.length === 0) {
+    this.body = this.element.querySelector('.column-chart__chart');
+
+    if (!this._data.length) {
       this.element.className = 'column-chart_loading';
     }
+  }
+
+  get dataTemplate() {
+    return `${this._data.map(dataElement => this.generateValueElement(dataElement)).join('')}`;
   }
 
   remove() {
